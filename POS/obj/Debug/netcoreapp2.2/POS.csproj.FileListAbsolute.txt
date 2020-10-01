@@ -1,0 +1,14 @@
+C:\Users\Rajni_Devi\source\repos\POS\POS\bin\Debug\netcoreapp2.2\POS.deps.json
+C:\Users\Rajni_Devi\source\repos\POS\POS\bin\Debug\netcoreapp2.2\POS.runtimeconfig.json
+C:\Users\Rajni_Devi\source\repos\POS\POS\bin\Debug\netcoreapp2.2\POS.runtimeconfig.dev.json
+C:\Users\Rajni_Devi\source\repos\POS\POS\bin\Debug\netcoreapp2.2\POS.dll
+C:\Users\Rajni_Devi\source\repos\POS\POS\bin\Debug\netcoreapp2.2\POS.pdb
+C:\Users\Rajni_Devi\source\repos\POS\POS\obj\Debug\netcoreapp2.2\POS.csprojAssemblyReference.cache
+C:\Users\Rajni_Devi\source\repos\POS\POS\obj\Debug\netcoreapp2.2\POS.csproj.CoreCompileInputs.cache
+C:\Users\Rajni_Devi\source\repos\POS\POS\obj\Debug\netcoreapp2.2\POS.RazorAssemblyInfo.cache
+C:\Users\Rajni_Devi\source\repos\POS\POS\obj\Debug\netcoreapp2.2\POS.RazorAssemblyInfo.cs
+C:\Users\Rajni_Devi\source\repos\POS\POS\obj\Debug\netcoreapp2.2\POS.AssemblyInfoInputs.cache
+C:\Users\Rajni_Devi\source\repos\POS\POS\obj\Debug\netcoreapp2.2\POS.AssemblyInfo.cs
+C:\Users\Rajni_Devi\source\repos\POS\POS\obj\Debug\netcoreapp2.2\POS.RazorTargetAssemblyInfo.cache
+C:\Users\Rajni_Devi\source\repos\POS\POS\obj\Debug\netcoreapp2.2\POS.dll
+C:\Users\Rajni_Devi\source\repos\POS\POS\obj\Debug\netcoreapp2.2\POS.pdb
