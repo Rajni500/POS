@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using POS.Contract.Core;
 using POS.Models;
+using POS.Utilities;
 using POS.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -13,9 +15,11 @@ using System.Threading.Tasks;
 
 namespace POS.Controllers.Core
 {
+    [EnableCors("myAllowSpecificOrigins")]
     public abstract class GenericController<M> : Controller
         where M : ModelBase
     {
+        protected ICache cache;
         protected IGenericRepository<M> genericRepository;
         protected IServiceProvider serviceProvider;
 
@@ -26,7 +30,7 @@ namespace POS.Controllers.Core
         }
 
         [HttpPost]
-        //[Authorize]
+        [AuthorizeLogin]
         [Route("Add")]
         public virtual ActionResult Add([FromBody] M entity)
         {
@@ -34,20 +38,19 @@ namespace POS.Controllers.Core
             {
                 if (entity == null)
                 {
-                    throw new ValidationException("Invalid input");
+                    return ExceptionHandler.throwException("Invalid input");
                 }
 
-                User profile = GetLoggedInUser();
                 return Json(genericRepository.Add(entity));
             }
             catch (ValidationException ex)
             {
-                throw ex;
+                return ExceptionHandler.throwException(ex.Message);
             }
         }
 
         [HttpPost]
-        //[Authorize]
+        [AuthorizeLogin]
         [Route("Delete")]
         public virtual ActionResult Delete([FromBody] SearchViewModel search)
         {
@@ -60,12 +63,12 @@ namespace POS.Controllers.Core
             }
             catch (ValidationException ex)
             {
-                throw ex;
+                return ExceptionHandler.throwException(ex.Message);
             }
         }
 
         [HttpPost]
-        //[Authorize]
+        [AuthorizeLogin]
         [Route("Edit")]
         public virtual ActionResult Edit([FromBody] M entity, bool hasMap = false)
         {
@@ -73,18 +76,18 @@ namespace POS.Controllers.Core
             {
                 if (entity == null)
                 {
-                    throw new ValidationException("Invalid input");
+                    return ExceptionHandler.throwException("Invalid input");
                 }
                 genericRepository.Edit(entity);
                 return Json(true);
             }
             catch (ValidationException ex)
             {
-                throw ex;
+                return ExceptionHandler.throwException(ex.Message);
             }
         }
 
-        //[Authorize]
+        [AuthorizeLogin]
         [HttpPost]
         [Route("GetAll")]
         public virtual ActionResult GetAll([FromBody] SearchViewModel searchViewModel)
@@ -114,7 +117,7 @@ namespace POS.Controllers.Core
             });
         }
 
-        //[Authorize]
+        [AuthorizeLogin]
         [HttpPost]
         [Route("GetById")]
         public virtual ActionResult GetById([FromBody]SearchViewModel search)
@@ -122,7 +125,7 @@ namespace POS.Controllers.Core
             return Json(genericRepository.SingleOrDefault(item => item.Id == search.Id, search));
         }
 
-        //[Authorize]
+        [AuthorizeLogin]
         [HttpPost]
         [Route("GetTotalNoOfRecords")]
         public virtual ActionResult GetTotalNoOfRecords([FromBody] SearchViewModel searchViewModel)
@@ -139,7 +142,8 @@ namespace POS.Controllers.Core
 
             return profile;
         }
-        public static User GetLoggedInUser(HttpRequest request)
+
+        public User GetLoggedInUser(HttpRequest request)
         {
             string headerToken = null;
             if (request.Headers.ContainsKey("Authorization"))
@@ -152,9 +156,9 @@ namespace POS.Controllers.Core
                 headerToken = request.Form["__RequestVerificationToken"];
             }
 
-            string loggedInUserkey = string.Format("{0}_{1}", headerToken, "LoggedInUser");
+            string loggedInUserkey = string.Format("{0}_{1}", headerToken, Constants.LoggedInUser);
 
-            User profileObject = null; // SessionHandler.cache.Get(loggedInUserkey);
+            User profileObject = (User)cache.Get(loggedInUserkey);
 
             if (profileObject != null)
             {
@@ -162,18 +166,6 @@ namespace POS.Controllers.Core
             }
 
             return new User();
-        }
-
-        //TODO Create Session Handler in shared Folder
-        public class SessionHandler
-        {
-            //    private static ICache cacheManager;
-            //    public static ICache cache => cacheManager;
-
-            //    public SessionHandler(ICache cache)
-            //    {
-            //        cacheManager = cache;
-            //    }
         }
     }
 }

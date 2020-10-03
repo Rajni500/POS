@@ -11,7 +11,12 @@ namespace POS.Models
     {
         public string Email { get; set; }
 
+        [NotMapped]
         public string Password { get; set; }
+
+        public byte[] PasswordHash { get; set; }
+
+        public byte[] PasswordSalt { get; set; }
 
         public string PhoneNumber { get; set; }
 

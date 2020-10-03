@@ -9,6 +9,6 @@ namespace POS.Contract
 {
     public interface IInvoiceRepository : IGenericRepository<Invoice>
     {
-
+        void UpdateProductQuantities(Invoice entity);
     }
 }

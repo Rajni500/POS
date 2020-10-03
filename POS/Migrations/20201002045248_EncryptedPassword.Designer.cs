@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using POS.Models;
 
 namespace POS.Migrations
 {
     [DbContext(typeof(POSDBContext))]
-    partial class POSDBContextModelSnapshot : ModelSnapshot
+    [Migration("20201002045248_EncryptedPassword")]
+    partial class EncryptedPassword
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -63,19 +65,19 @@ namespace POS.Migrations
 
                     b.Property<DateTime>("DateOfSale");
 
-                    b.Property<float>("DiscountPercent");
+                    b.Property<int>("DiscountPercent");
 
                     b.Property<string>("InvoiceNumber");
 
-                    b.Property<float>("InvoiceTotal");
+                    b.Property<int>("InvoiceTotal");
 
-                    b.Property<float>("SubTotal");
+                    b.Property<int>("SubTotal");
 
                     b.Property<string>("Title");
 
                     b.Property<int>("UserId");
 
-                    b.Property<float>("VAT");
+                    b.Property<int>("VAT");
 
                     b.HasKey("Id");
 

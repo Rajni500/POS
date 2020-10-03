@@ -13,5 +13,7 @@ namespace POS.ViewModels
         public int PageSize { get; set; }
 
         public string ResolvePropertyNames { get; set; }
+
+        public int CategoryId { get; set; }
     }
 }

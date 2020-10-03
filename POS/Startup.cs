@@ -17,6 +17,8 @@ using Microsoft.IdentityModel.Tokens;
 using POS.Contract;
 using POS.Models;
 using POS.Repositories;
+using POS.Utilities;
+using System.Web.Cors;
 
 namespace POS
 {
@@ -27,16 +29,22 @@ namespace POS
             Configuration = configuration;
         }
 
+        readonly string MyAllowSpecificOrigins = "myAllowSpecificOrigins";
+
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc()
+                .AddJsonOptions(
+            options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+                      ).SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
             services.AddEntityFrameworkSqlServer().AddDbContext<POSDBContext>((options =>
                 options.UseSqlServer(Configuration.GetConnectionString("POSDBContext"))));
 
-            var key = Encoding.ASCII.GetBytes("KeyForSignInSecret@Emeis");
+            var key = Encoding.ASCII.GetBytes(Constants.SecretKey);
 
             services.AddAuthentication(x =>
             {
@@ -47,21 +55,32 @@ namespace POS
             {
                 x.RequireHttpsMetadata = false;
                 x.SaveToken = true;
-                //x.TokenValidationParameters = new TokenValidationParameters
-                //{
-                //    //ValidateIssuerSigningKey = true,
-                //    //IssuerSigningKey = new SymmetricSecurityKey(key),
-                //    ValidateIssuer = false,
-                //    ValidateAudience = false
-                //};
-            })
-            ;
+                x.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = false,
+                    ValidateAudience = false
+                };
+            });
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:4200",
+                                                  "http://localhost:4500")
+                               .AllowAnyHeader()
+                               .AllowAnyMethod();
+                    });
+            });
             RegisterServies(services);
         }
 
         private static void RegisterServies(IServiceCollection services)
         {
+            services.AddSingleton<ICache, AspNetCache>();
             services.AddTransient<IAccountRepository, AccountRepository>();
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<IInvoiceRepository, InvoiceRepository>();
@@ -84,6 +103,7 @@ namespace POS
 
             app.UseHttpsRedirection();
             app.UseMvc();
+            app.UseCors(MyAllowSpecificOrigins);
         }
     }
 }

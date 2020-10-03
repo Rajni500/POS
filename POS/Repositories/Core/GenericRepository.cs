@@ -26,6 +26,7 @@ namespace POS.Repositories.Core
 
         public TM Add(TM entity)
         {
+            entity.Id = 0;
             Context.Set<TM>().Add(entity);
             Save();
             Context.Entry(entity).State = EntityState.Detached;
