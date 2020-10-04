@@ -24,9 +24,10 @@ namespace POS.Controllers.Core
         protected IServiceProvider serviceProvider;
 
         public GenericController() { }
-        public GenericController(IGenericRepository<M> genericrepository)
+        public GenericController(IGenericRepository<M> genericrepository, ICache cache)
         {
             this.genericRepository = genericrepository;
+            this.cache = cache;
         }
 
         [HttpPost]

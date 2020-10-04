@@ -14,6 +14,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace POS.Controllers
@@ -22,9 +23,8 @@ namespace POS.Controllers
     [Route("Account/")]
     public class AccountController : GenericController<User>
     {
-        private ICache cache;
-
         public AccountController(IAccountRepository repository, IServiceProvider serviceProvider, ICache cache)
+            : base(repository,cache)
         {
             base.genericRepository = repository;
             base.serviceProvider = serviceProvider;
@@ -38,6 +38,23 @@ namespace POS.Controllers
         {
             try
             {
+                if(!Regex.IsMatch(entity.Email, "^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$"))
+                {
+                    return ExceptionHandler.throwException("\"" + entity.Email + "\" is not a valid email");
+                }
+                if(!Regex.IsMatch(entity.Password, "^.*(?=.{8,})(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!*@#$%^&+=]).*$"))
+                {
+                    return ExceptionHandler.throwException("\"" + entity.Password + "\" is not a valid password. It should be 8 characters or more and should contain atleast a Digit, a Lowercse letter, a Uppercase letter and a Special character.");
+                }
+                if (!Regex.IsMatch(entity.PhoneNumber, "^[6-9]{1}[0-9]{9}$"))
+                {
+                    return ExceptionHandler.throwException("\"" + entity.PhoneNumber + "\" is not a valid phone number.");
+                }
+                if (string.IsNullOrWhiteSpace(entity.Title))
+                {
+                    return ExceptionHandler.throwException("Name should not be empty.");
+                }
+
                 var existingUser = FindByEmail(entity);
                 if (existingUser != null && existingUser.Count > 0)
                     return ExceptionHandler.throwException("Email \"" + entity.Email + "\" is already taken");

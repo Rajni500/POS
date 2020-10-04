@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using POS.Models;
+using POS.Models.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +15,16 @@ namespace POS.Utilities
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false, Inherited = true)]
     public sealed class AuthorizeLoginAttribute : Attribute, IAuthorizationFilter
     {
+        private Role role;
+        public AuthorizeLoginAttribute()
+        {
+            role = Role.None;
+        }
+
+        public AuthorizeLoginAttribute( Role userRole)
+        {
+            role = userRole;
+        }
 
         /// <summary>
         /// On authorization event handler.
@@ -38,19 +50,61 @@ namespace POS.Utilities
 
             if (token == null)
             {
-                //Returns result that contains error details
-                context.Result = new JsonResult("")
-                {
-                    StatusCode = 401,
-                    ContentType = "application/json",
-                    Value = new
-                    {
-                        success = false,
-                        error = "token expired"
-                    }
-                };
+                TokenExpired(context);
 
             }
+
+            if(role != Role.None)
+            {
+                VerifyUserRole(context, cache, headerToken);
+            }
+        }
+
+        private void VerifyUserRole(AuthorizationFilterContext context, ICache cache, string headerToken)
+        {
+            string loggedInUserkey = string.Format("{0}_{1}", headerToken, Constants.LoggedInUser);
+
+            User profileObject = (User)cache.Get(loggedInUserkey);
+
+            if (profileObject != null)
+            {
+                if (profileObject.RoleId != role)
+                {
+                    UnAuthorizedAccess(context);
+                }
+            }
+            else
+            {
+                TokenExpired(context);
+            }
+        }
+
+        private static void UnAuthorizedAccess(AuthorizationFilterContext context)
+        {
+            context.Result = new JsonResult("")
+            {
+                StatusCode = 400,
+                ContentType = "application/json",
+                Value = new
+                {
+                    success = false,
+                    error = "User does not have rights to perform this action"
+                }
+            };
+        }
+
+        private static void TokenExpired(AuthorizationFilterContext context)
+        {
+            context.Result = new JsonResult("")
+            {
+                StatusCode = 401,
+                ContentType = "application/json",
+                Value = new
+                {
+                    success = false,
+                    error = "token expired"
+                }
+            };
         }
     }
 }

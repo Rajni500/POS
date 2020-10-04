@@ -16,6 +16,7 @@ namespace POS.Controllers
     {
         IInvoiceRepository repository;
         public InvoiceController(IInvoiceRepository repository, IServiceProvider serviceProvider, ICache cache)
+            : base(repository, cache)
         {
             base.genericRepository = repository;
             base.serviceProvider = serviceProvider;

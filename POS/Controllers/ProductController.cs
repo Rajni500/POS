@@ -2,6 +2,7 @@
 using POS.Contract;
 using POS.Controllers.Core;
 using POS.Models;
+using POS.Models.Enums;
 using POS.Utilities;
 using POS.ViewModels;
 using System;
@@ -18,7 +19,8 @@ namespace POS.Controllers
     {
         private ICategoryRepository categoryRepository;
 
-        public ProductController(IProductRepository repository, IServiceProvider serviceProvider, ICategoryRepository categoryRepository)
+        public ProductController(IProductRepository repository, IServiceProvider serviceProvider, ICategoryRepository categoryRepository, ICache cache)
+            : base(repository, cache)
         {
             base.genericRepository = repository;
             base.serviceProvider = serviceProvider;
@@ -26,7 +28,7 @@ namespace POS.Controllers
         }
 
         [HttpPost]
-        [AuthorizeLogin]
+        [AuthorizeLogin(userRole: Role.Admin)]
         [Route("Add")]
         public override ActionResult Add([FromBody] Product entity)
         {
@@ -43,6 +45,22 @@ namespace POS.Controllers
             entity.Category = null;
 
             return base.Add(entity);
+        }
+
+        [HttpPost]
+        [AuthorizeLogin(userRole: Role.Admin)]
+        [Route("Edit")]
+        public override ActionResult Edit([FromBody] Product entity, bool hasMap = false)
+        {
+            return base.Edit(entity, hasMap);
+        }
+
+        [HttpPost]
+        [AuthorizeLogin(userRole: Role.Admin)]
+        [Route("Delete")]
+        public override ActionResult Delete([FromBody] SearchViewModel search)
+        {
+            return base.Delete(search);
         }
 
         public override ActionResult GetAll([FromBody] SearchViewModel searchViewModel)
