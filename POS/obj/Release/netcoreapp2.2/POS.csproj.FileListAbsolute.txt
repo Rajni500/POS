@@ -11,3 +11,4 @@ C:\Users\Rajni_Devi\source\repos\POS\POS\obj\Release\netcoreapp2.2\POS.AssemblyI
 C:\Users\Rajni_Devi\source\repos\POS\POS\obj\Release\netcoreapp2.2\POS.RazorTargetAssemblyInfo.cache
 C:\Users\Rajni_Devi\source\repos\POS\POS\obj\Release\netcoreapp2.2\POS.dll
 C:\Users\Rajni_Devi\source\repos\POS\POS\obj\Release\netcoreapp2.2\POS.pdb
+C:\Users\Rajni_Devi\source\repos\POS\POS\obj\Release\netcoreapp2.2\POS.csprojAssemblyReference.cache

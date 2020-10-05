@@ -97,6 +97,15 @@ namespace POS.Repositories.Core
 
             list = IncludeResolvePropertyNames(searchViewModel, list);
 
+            if(searchViewModel.IsAscendingOrder)
+            {
+                list = list.OrderBy(i => i.Id);
+            }
+            else
+            {
+                list = list.OrderByDescending(i => i.Id);
+            }
+
             if (searchViewModel.PageSize != 0)
             {
                 query = list.Skip(searchViewModel.PageSize * searchViewModel.PageIndex)

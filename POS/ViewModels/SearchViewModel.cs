@@ -15,5 +15,7 @@ namespace POS.ViewModels
         public string ResolvePropertyNames { get; set; }
 
         public int CategoryId { get; set; }
+
+        public bool IsAscendingOrder { get; set; }
     }
 }
